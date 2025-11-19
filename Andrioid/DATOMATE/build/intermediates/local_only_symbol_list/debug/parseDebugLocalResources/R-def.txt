@@ -1,0 +1,34 @@
+R_DEF: Internal format may change without notice
+local
+color black
+color purple_200
+color purple_500
+color purple_700
+color teal_200
+color teal_700
+color white
+drawable add_icon
+drawable arrow_down
+drawable captura
+drawable compass
+drawable gota
+drawable home
+drawable ic_launcher_background
+drawable ic_launcher_foreground
+drawable imagenes
+drawable leaf_icon
+drawable leafs_image
+drawable logo3
+drawable perfil
+drawable prediccion
+drawable regla
+drawable reportes
+drawable row_back
+drawable suggestion_icon
+drawable termometro
+mipmap ic_launcher
+mipmap ic_launcher_round
+string app_name
+style Theme.DATOMATE
+xml backup_rules
+xml data_extraction_rules
