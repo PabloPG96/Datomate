@@ -1,0 +1,100 @@
+{% extends "base/plantilla.html" %}
+{% load static %}
+
+{% block page_title %}Predicciones{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-lg-12 mb-4">
+        <div class="card shadow h-100 py-3 d-flex justify-content-center align-items-center">
+            <div class="card-body text-center">
+                <i class="fas fa-leaf fa-3x text-success mb-3" style="color:#6AA84F !important;"></i>
+
+                <div class="h5 mb-2 text-gray-800">Día predicho:</div>
+                <div class="h3 font-weight-bold text-gray-800 mb-4">
+                    {{ dia_predicho|default:"--" }}
+                </div>
+
+                <div class="h5 mb-2 text-gray-800">Producción esperada:</div>
+                <div class="h1 font-weight-bold text-gray-800 mb-4">
+                    {{ produccion_predicha|floatformat:7 }} kg
+                </div>
+
+
+                <form method="POST"  action="{% url 'usuarios:predicciones' %}">
+                    {% csrf_token %}
+                    <button class="btn btn-success">Generar Predicción</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Predicciones</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-area">
+                    <canvas id="predictionChart"></canvas>
+                    <div class="text-center mt-4">
+                        <span class="mr-3">
+                            <i class="fas fa-circle" style="color:#6AA84F;"></i> Predicción
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block extra_scripts %}
+<script src="{% static 'vendor/chart.js/Chart.min.js' %}"></script>
+<script>
+const fechas = {{ fechas|safe }};
+const valores = {{ valores|safe }};
+
+const labels = fechas.map(f => {
+    const d = new Date(f);
+    return d.toLocaleDateString("es-MX", { day: '2-digit', month: 'short' });
+});
+
+var ctx = document.getElementById("predictionChart");
+if (ctx) {
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: "Predicción (kg)",
+                borderColor: "#6AA84F",
+                borderWidth: 2,
+                data: valores,
+                fill: false,
+                tension: 0.3,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: false
+                },
+                x: {
+                    ticks: { autoSkip: true }
+                }
+            }
+        }
+    });
+}
+
+</script>
+{% endblock extra_scripts %}

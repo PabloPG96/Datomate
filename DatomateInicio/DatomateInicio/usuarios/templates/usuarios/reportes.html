@@ -1,0 +1,102 @@
+{% extends "base/plantilla.html" %}
+{% load static %}
+
+{% block page_title %}Reportes{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card shadow mb-4">
+            <div class="card-body">
+
+                <!-- Controles -->
+                <form id="filtrosForm" class="row mb-4 align-items-center">
+
+                    <div class="col-md-4">
+                        <label for="rangoFecha">Rango de Fechas</label>
+                        <select class="form-control" id="rangoFecha" name="rango">
+                            <option value="7d"  {% if rango_actual == "7d" %}selected{% endif %}>Última semana</option>
+                            <option value="30d" {% if rango_actual == "30d" %}selected{% endif %}>Últimos 30 días</option>
+                            <option value="1y"  {% if rango_actual == "1y" %}selected{% endif %}>Último año</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="tipoDato">Tipo de dato</label>
+                        <select class="form-control" id="tipoDato" name="tipo">
+                            <option value="temperatura" {% if tipo_seleccionado == "Temperatura" %}selected{% endif %}>Temperatura</option>
+                            <option value="humedad" {% if tipo_seleccionado == "Humedad" %}selected{% endif %}>Humedad</option>
+                            <option value="longitud" {% if tipo_seleccionado == "Longitud" %}selected{% endif %}>Longitud del Tallo</option>
+                            <option value="diametro" {% if tipo_seleccionado == "Diametro" %}selected{% endif %}>Diámetro del Tallo</option>
+                        </select>
+                    </div>
+
+                </form>
+
+                <!-- Gráfica -->
+                <div class="chart-area" style="height: 400px;">
+                    <canvas id="reportChart"></canvas>
+                    <div class="text-center mt-4">
+                        <i class="fas fa-circle" style="color:{{ color }};"></i> {{ tipo_seleccionado }}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block extra_scripts %}
+<script src="{% static 'vendor/chart.js/Chart.min.js' %}"></script>
+
+<script>
+// Auto-submit form on changes
+document.getElementById("rangoFecha").addEventListener("change", () => {
+    document.getElementById("filtrosForm").submit();
+});
+document.getElementById("tipoDato").addEventListener("change", () => {
+    document.getElementById("filtrosForm").submit();
+});
+
+// Datos recibidos desde Django
+const labels = {{ labels_json|safe }};
+const valores = {{ valores_json|safe }};
+const selectedLabel = "{{ tipo_seleccionado }}";
+const lineColor = "{{ color }}";
+
+var ctx = document.getElementById("reportChart");
+
+if (ctx) {
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: selectedLabel,
+                borderColor: lineColor,
+                backgroundColor: "rgba(0,0,0,0)",
+                pointRadius: 3,
+                pointBackgroundColor: lineColor,
+                data: valores
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            legend: { display: false },
+            scales: {
+                yAxes: [{
+                    ticks: { beginAtZero: false }
+                }],
+                xAxes: [{
+                    gridLines: { display: false }
+                }]
+            }
+        }
+    });
+}
+</script>
+{% endblock extra_scripts %}

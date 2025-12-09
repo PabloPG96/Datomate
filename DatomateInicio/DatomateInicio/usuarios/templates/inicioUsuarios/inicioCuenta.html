@@ -1,0 +1,27 @@
+{% extends "base/plantilla2.html" %}
+{% load static %}
+
+{% block page_title %}Inicio{% endblock %}
+
+{% block content %}
+
+<div class="row align-items-center justify-content-center" style="min-height: 70vh;">
+    <div class="col-12 text-center">
+
+        <div class="mb-4">
+            <img src="{% static 'img/LogoDATOMATEPNG.png' %}"
+             alt="Imagen Principal"
+             class="img-fluid"
+             style="max-height: 250px; object-fit: cover;">
+        </div>
+
+        <h1 class="display-4 text-gray-800 font-weight-bold">¡Bienvenido a Datomate!</h1>
+
+        <p class="lead text-gray-600 mt-3">
+            El sistema está listo. Selecciona una opción del menú para comenzar.
+        </p>
+
+    </div>
+</div>
+
+{% endblock content %}
